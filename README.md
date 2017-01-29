@@ -42,13 +42,31 @@ This process is repeated at least once a minute to continually react to the weat
 
 ### Noise Synths
 
-These synthesizers simulate natural noise.
+These synthesizers simulate natural noise. They are selected based on the weather condition
 
 | Synth    | Description       | Weather Condition(s)    | Controlled By | Inspiration | 
 |----------|-------------------|-------------------------|---------------|-------------|
 | Rain     | Rain sounds       | Rain                    | Temperature controls the amount of rain droplet sound, Precipitation controls the amount of pink noise rain | Modified from [This snippet](http://sccode.org/1-e) |
 | Ocean    | Ocean sound       | Clear                   | Temperature controls how much crackling noise is in the wave. | Modified from [This snippet](http://sccode.org/1-1n) |
 | Crickets | Crickets Chirping | Cloudy/Overcast/Default | Temperature controls the pitch of crickets chirping, much like [in real life](https://books.google.com/books?id=Jqco0ttVn0gC&lpg=PA970&ots=jVb2ir2UK1&dq=%22The%20Cricket%20as%20a%20Thermometer%22&pg=PA970#v=onepage&q=%22The%20Cricket%20as%20a%20Thermometer%22&f=false) | Modified from [This snippet](http://sccode.org/1-4QB) |
+
+### Pattern Synths
+
+These synthesizers are designed to sound pretty with long release times.
+
+| Synth | Description             | Inspiration |
+|-------|-------------------------|-------------|
+| Bell  | Drawn-out bell sound    | Modeled after the `PAD Long Bell` from [Syntorial](http://www.syntorial.com/) |
+| Pad   | Drawn out PWM pad sound | Modeled after the `PAD PWM` from Syntorial |
+
+Synth patterns are controlled by the temperature range (Cold, Warm and Hot). They each have a set of notes associated with them.
+Notes are randomly selected from the set. Additionally, each temperature range can have a different synth and note length
+
+| Temperature Range | Notes           | Instrument | Note Length   | Description        |
+|-------------------|-----------------|------------|---------------|--------------------|
+| Cold              | C5, D#5, G5, C6 | Pad        | Half Notes    | Slow and dark      |
+| Warm              | C5, E5, G5, C6  | Bell       | Quarter Notes | Brisk and cheerful |
+| Hot               | C6, E6, G6      | Bell       | Eighth Notes  | Fast and bright    |
 
 ## Future Development
 
