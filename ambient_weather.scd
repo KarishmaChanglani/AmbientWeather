@@ -1,4 +1,23 @@
+
 (
+
+/**
+*/
+SynthDef(\sunny_ocean, {
+arg crackle_amp = 0.5,
+	crackle_den = 70,
+	white_amp = 0.1,
+	one_coef  = 0.7,
+	freq_range = (4..7);
+var sig;
+
+sig = OnePole.ar(WhiteNoise.ar(white_amp)+Dust.ar(crackle_den, crackle_amp), one_coef);
+sig = sig + Splay.ar(FreqShift.ar(sig, 1/freq_range));
+
+	Out.ar(0, sig);
+}).add;
+
+
 /**
  * Synth that makes rain sounds.
  * Modified from code snippet http://sccode.org/1-e
@@ -68,21 +87,27 @@ SynthDef(\rain, {
 }).add;
 )
 
+//ocean synth
+
+
 //OSC setup
 (
 //Create the synths
 ~rain = Synth.new(\rain);
+~ocean = Synth.new(\sunny_ocean);
 OSCdef.new(
-    \droplets,
+    \temperature,
     {
         arg msg, time, addr, port;
         msg.postln;
-        ~rain.set(\droplet_mean, msg[1].linlin(0, 1, 10, 180));
-    },
+        //~rain.set(\droplet_mean, msg[1].linlin(0, 1, 10, 180));
+		~ocean.set(\crackle_den, 100*msg[1]);
+	},
     '/weather/temperature'
 );
+
 OSCdef.new(
-    \sheet_rain,
+    \precipitation,
     {
         arg msg, time, addr, port;
         msg.postln;
@@ -91,3 +116,4 @@ OSCdef.new(
     '/weather/precipitation'
 );
 )
+
