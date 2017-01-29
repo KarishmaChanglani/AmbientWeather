@@ -26,7 +26,7 @@ by the weather. Some are natural sounds like rain or crickets chirping. Others
 are synth pads that play patterns of music that remind us of different temperature ranges.
 
 ### How it works
-![Flowchart](docs/Flowchart.svg)
+![Flowchart](docs/Flowchart.png)
 
 To play music, the python script fetches weather data from [wunderground.com](https://www.wunderground.com). 
 It then extracts temperature, precipitation, weather condition, etc from the JSON data. These numbers are converted
