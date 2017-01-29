@@ -249,6 +249,11 @@ SynthDef.new(\pad, {
 
 //OSC setup
 (
+//Array indices
+~RAIN_INDEX = 0;
+~OCEAN_INDEX = 1;
+~CRICKET_INDEX = 2;
+
 ~synth_list = [
     \rain,
     \ocean,
@@ -305,7 +310,10 @@ OSCdef.new(
     {
         arg msg, time, addr, port;
         msg.postln;
-        ~rain.set(\rain_variation_mean, 0.25 * msg[1]);
+
+        if (~synth_index == ~RAIN_INDEX, {
+            ~noise_synth.set(\rain_variation_mean, 0.25 * msg[1]);
+        });
     },
     '/weather/precipitation'
 );
