@@ -1,9 +1,39 @@
-
+/**
+ * Synth that makes the cricket sounds.
+*/
 (
+SynthDef(\crickets, {
+	arg crickets_per_second = 15;
+	var trig, seq, demand, sig;
+
+	// instead of [metro], Impulse.kr is used here. Delta t = 17 ms equates to 58.82 Hz.
+	trig = Impulse.kr(crickets_per_second);
+
+	// the main idea of the following line was to use an approach
+	// that uses the same coefficients as described in the pd patch
+	seq = Dseq(Array.fill(41, {|i| if(i<7, {(i+2)/9},{0}) }),inf);
+	demand = Demand.kr(trig,0,seq);
+
+	// Pure data seemed to slightly disobey its own specifications,
+	// so I analysed the waveform and came up with this:
+	sig = EnvGen.ar(Env.new([0, 1, 0], [4/44100, 0]), trig) * demand;
+
+
+	sig = OnePole.ar(sig, exp(-2pi * (1000 * SampleDur.ir)));
+	sig = (
+			// changed the Q factor of the first 3 BPFs to approximate farnells sound
+			BPF.ar(sig, 4500 + ((0..2)*50), 300.reciprocal, 100)).sum
+			+ BPF.ar(sig, 9000, 500.reciprocal, 42);
+	sig = ((sig - OnePole.ar(sig, exp(-2pi * (4000 * SampleDur.ir)))) * 0.7)!2;
+	Out.ar(sig, sig);
+}).add;
 
 /**
+ * Synth that makes ocean sounds.
+ * Modifiend from code spippet "http://sccode.org/1-1n"
+
 */
-SynthDef(\sunny_ocean, {
+SynthDef(\ocean, {
 arg crackle_amp = 0.5,
 	crackle_den = 70,
 	white_amp = 0.1,
@@ -94,14 +124,16 @@ SynthDef(\rain, {
 (
 //Create the synths
 ~rain = Synth.new(\rain);
-~ocean = Synth.new(\sunny_ocean);
+~ocean = Synth.new(\ocean);
+~crickets = Synth.new(\crickets);
 OSCdef.new(
     \temperature,
     {
         arg msg, time, addr, port;
         msg.postln;
         //~rain.set(\droplet_mean, msg[1].linlin(0, 1, 10, 180));
-		~ocean.set(\crackle_den, 100*msg[1]);
+		//~ocean.set(\crackle_den, 100*msg[1]);
+		~crickets.set(\temp, (msg[1]-0.37)*100+15)
 	},
     '/weather/temperature'
 );
