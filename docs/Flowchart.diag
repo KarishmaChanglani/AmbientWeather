@@ -1,0 +1,7 @@
+blockdiag {
+  Wunderground[shape=cloud]
+  Python[color=lightgreen]
+  SuperCollider[color=skyblue]
+  Wunderground -> Python [label=HTTP]
+  Python -> SuperCollider[label=OSC]
+}
