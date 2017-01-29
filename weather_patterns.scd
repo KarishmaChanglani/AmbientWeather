@@ -120,9 +120,6 @@ SynthDef.new(\pad, {
 };
 )
 
-x = ~make_pattern.value(0).play(quant: 1.0);
-x.stop;
-
 //OSC setup
 (
 //Create the synths

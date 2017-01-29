@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import requests
 import json
 from pythonosc import udp_client
@@ -17,6 +18,7 @@ def sendWData(ip, port, inputs):
     client = udp_client.SimpleUDPClient(ip, port)
     client.send_message("/weather/temperature" , inputs['temperature'])
     client.send_message("/weather/precipitation" , inputs['precipitation'])
+    client.send_message("/weather/warmth", inputs['warmth'])
 
 def fetchWData(key, loc_state, loc_city):
     """Fetches the weather data from the WundergroundAPI
@@ -51,6 +53,22 @@ def normalizeValue(old_max, old_min, val):
     answer = answer/(old_max-old_min)
     return answer
 
+    
+def calculateWarmth(normalized_temp):
+    """
+    Put the normalized temperature value into one of three buckets:
+    Cold (0), Warm (1), Hot (2)
+    
+    Function Parameters
+    normalized_temp -- Temperature value from 0.0 to 1.0
+    """
+    if normalized_temp < 1.0 / 3.0:
+        return 0
+    elif normalized_temp < 2.0 / 3.0:
+        return 1
+    else:
+        return 2
+    
 def normalizeWData(current_observations): 
     """Takes the current observation and reduces it to a range between 0 to 1 using teh normalzeValue function
     
@@ -63,6 +81,7 @@ def normalizeWData(current_observations):
     (temp_max, temp_min) = (80, 10)
     (prec_max, prec_min) = (100, 0)
     return_data['temperature'] = normalizeValue(temp_max, temp_min, float(current_observations['temp_f']) )
+    return_data['warmth'] = calculateWarmth(return_data['temperature'])
     return_data['precipitation'] = normalizeValue(prec_max, prec_min, float(current_observations['precip_1hr_metric']))
     return return_data
 
@@ -70,7 +89,7 @@ if __name__ == "__main__":
     with open('key') as input_file:
         for line in input_file:
             key = line.strip()
-    ip = "10.250.125.133"
+    ip = "127.0.0.1"
     port = 57120
     loc_state = "PA"
     loc_city  = "Philadelphia"
