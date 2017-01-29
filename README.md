@@ -38,6 +38,18 @@ the temperature and other values and adjusts synth settings (such as which music
 
 This process is repeated at least once a minute to continually react to the weather.
 
+## Synths
+
+### Noise Synths
+
+These synthesizers simulate natural noise.
+
+| Synth    | Description       | Weather Condition(s)    | Controlled By | Inspiration | 
+|----------|-------------------|-------------------------|---------------|-------------|
+| Rain     | Rain sounds       | Rain                    | Temperature controls the amount of rain droplet sound, Precipitation controls the amount of pink noise rain | Modified from [This snippet](http://sccode.org/1-e) |
+| Ocean    | Ocean sound       | Clear                   | Temperature controls how much crackling noise is in the wave. | Modified from [This snippet](http://sccode.org/1-1n) |
+| Crickets | Crickets Chirping | Cloudy/Overcast/Default | Temperature controls the pitch of crickets chirping, much like [in real life](https://books.google.com/books?id=Jqco0ttVn0gC&lpg=PA970&ots=jVb2ir2UK1&dq=%22The%20Cricket%20as%20a%20Thermometer%22&pg=PA970#v=onepage&q=%22The%20Cricket%20as%20a%20Thermometer%22&f=false) | Modified from [This snippet](http://sccode.org/1-4QB) |
+
 ## Future Development
 
 These are some features to add in the future:
