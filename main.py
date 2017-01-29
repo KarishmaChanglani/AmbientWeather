@@ -2,11 +2,14 @@
 import requests
 import json
 from pythonosc import udp_client
+import argparse
+import time
 
-conditions_mapping = { 'Partly Cloudy': 1, 
-        'Rain' : 2, 
-        'Cloudy' : 1, 
-        'Overcast': 1, }
+conditions_mapping = { 'Partly Cloudy': 3, 
+        'Rain' : 1, 
+        'Cloudy' : 3, 
+        'Overcast': 3, 
+        'Clear': 2}
 
 def sendWData(ip, port, inputs):
     """Sends signal to the synth collider to change its audio output 
@@ -15,7 +18,9 @@ def sendWData(ip, port, inputs):
     port -- The port where there supercollider is attached 
     inputs -- The input data to send to synth collider
     """
+    print("Sending inputs to synth")
     client = udp_client.SimpleUDPClient(ip, port)
+    client.send_message("/weather/conditions", inputs['conditions'])
     client.send_message("/weather/temperature" , inputs['temperature'])
     client.send_message("/weather/precipitation" , inputs['precipitation'])
     client.send_message("/weather/warmth", inputs['warmth'])
@@ -76,7 +81,11 @@ def normalizeWData(current_observations):
     current_observations -- the weather data to normalize
     """
     return_data = {}
-    return_data['conditions'] = conditions_mapping[current_observations['weather']]
+    try: 
+        return_data['conditions'] = conditions_mapping[current_observations['weather']]
+    except: 
+        return_data['conditions'] = 3
+
     #Values set on winter conditions, change for your convenience
     (temp_max, temp_min) = (80, 10)
     (prec_max, prec_min) = (100, 0)
@@ -89,10 +98,20 @@ if __name__ == "__main__":
     with open('key') as input_file:
         for line in input_file:
             key = line.strip()
-    ip = "127.0.0.1"
-    port = 57120
-    loc_state = "PA"
-    loc_city  = "Philadelphia"
-    parsed_json = fetchWData(key, loc_state, loc_city)
-    print("The current temperature(F): {}".format(parsed_json['current_observation']['temp_f']))
-    sendWData(ip, port, normalizeWData(parsed_json['current_observation']))
+    parser = argparse.ArgumentParser(description='Command line arguments')
+    parser.add_argument('port', type=int, help='the port for the synth server')
+    parser.add_argument('ip', type=str, help='ip address of the synth server')
+    parser.add_argument('state', type=str, help='location state of the weather report')
+    parser.add_argument('city', type=str, help='location city of the weather report')
+
+    args = parser.parse_args()
+
+    ip = args.ip
+    port = args.port
+    loc_state = args.state
+    loc_city  = args.city
+    
+    while True: 
+        parsed_json = fetchWData(key, loc_state, loc_city)
+        sendWData(ip, port, normalizeWData(parsed_json['current_observation']))
+        time.sleep(60)

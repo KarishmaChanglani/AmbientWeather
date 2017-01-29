@@ -187,9 +187,7 @@ SynthDef.new(\pad, {
     //Output the signal
     Out.ar(0, sig.dup);
 }).add;
-)
 
-(
 /**
  * Function to create a pattern
  */
@@ -242,22 +240,20 @@ SynthDef.new(\pad, {
         \instrument, instruments[warmth_index]
     )
 };
-)
 
-//ocean synth
 
 
 //OSC setup
-(
+
 //Array indices
-~RAIN_INDEX = 0;
-~OCEAN_INDEX = 1;
-~CRICKET_INDEX = 2;
+~rain_index = 0;
+~ocean_index = 1;
+~cricket_index = 2;
 
 ~synth_list = [
     \rain,
     \ocean,
-    \cricket
+    \crickets
 ];
 ~param_names = [
     \droplet_mean,
@@ -266,7 +262,7 @@ SynthDef.new(\pad, {
 ];
 
 ~noise_synth = nil;
-~synth_index = nil;
+~synth_index = 0;
 
 //Create the synths
 //~rain = Synth.new(\rain);
@@ -300,7 +296,7 @@ OSCdef.new(
             ~noise_synth.free;
         });
         ~synth_index = msg[1];
-        ~noise_synth = Synth.new(~synth_list[~synth_index]);
+        ~noise_synth = Synth.new(~synth_list[~synth_index - 1]);
     },
     '/weather/conditions'
 );
@@ -311,7 +307,7 @@ OSCdef.new(
         arg msg, time, addr, port;
         msg.postln;
 
-        if (~synth_index == ~RAIN_INDEX, {
+        if (~synth_index == ~rain_index, {
             ~noise_synth.set(\rain_variation_mean, 0.25 * msg[1]);
         });
     },
