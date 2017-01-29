@@ -1,8 +1,10 @@
 /**
  * Synth that makes the cricket sounds.
-*/
+ * Modified from code snippet http://sccode.org/1-4QB
+ */
 (
 SynthDef(\crickets, {
+    //Cricket chirp frequency
 	arg crickets_per_second = 0.5;
 	var trig, seq, demand, sig;
 
@@ -32,7 +34,7 @@ SynthDef(\crickets, {
 
 /**
  * Synth that makes ocean sounds.
- * Modifiend from code spippet "http://sccode.org/1-1n"
+ * Modified from code spippet "http://sccode.org/1-1n"
  */
 SynthDef(\ocean, {
 arg crackle_amp = 0.5,
@@ -44,8 +46,11 @@ var sig;
 
     crackle_den = 100 * crackle_den;
 
-sig = OnePole.ar(WhiteNoise.ar(white_amp)+Dust.ar(crackle_den, crackle_amp), one_coef);
-sig = sig + Splay.ar(FreqShift.ar(sig, 1/freq_range));
+    //Generate white noise with a little crackle
+    sig = OnePole.ar(WhiteNoise.ar(white_amp)+Dust.ar(crackle_den, crackle_amp), one_coef);
+
+    //Shift the white noise from left to right channels
+    sig = sig + Splay.ar(FreqShift.ar(sig, 1/freq_range));
 
 	Out.ar(0, sig);
 }).add;
@@ -318,7 +323,6 @@ OSCdef.new(
     '/weather/precipitation'
 );
 
-//Create the synths
 ~weather = nil;
 OSCdef.new(
     \warmth,
